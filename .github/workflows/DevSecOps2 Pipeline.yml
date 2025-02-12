@@ -1,0 +1,51 @@
+name: DevSecOps Pipeline
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build_image:
+      - name: Build Docker Image
+        runs_on: ubuntu-latest
+
+        steps:
+          - name: Checkour code
+            uses: actions/checkout@v4
+
+          # Clone Repo
+          - name: Clone GitHub Repo
+            run: git clone https://github.com/devsecblueprint/python-fastapi/blob/main/Dockerfile
+
+          # Build Docker Image
+          - name: Build Docker Image
+            run: |
+              docker build -t Dockerfile:${{ github.sha }} .
+              
+    lint_format:
+        - name: Run lint and formatting checks with pylint and black
+          runs_on: ubuntu-latest
+          strategy:
+            matrix:
+              python-version: ["3.8", "3.9", "3.10", "3.12"]
+          steps:
+            - uses: actions/checkout@v4
+            - name: Setup Python ${{ matric.python-version}}
+              uses: actions/setup-python@v3
+              with:
+                python-versoin: ${{ matric.python-version}}
+            - name: Install dependencies
+              run: |
+                python -m pip install --upgrade pip
+                pip install pylint
+                pip install pylint black
+
+
+            - name: Analysing the code with pylint
+              run: 
+                
+            - name: Run black
+              run: black --check .    
+                    
+        
+
